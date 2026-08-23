@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
+const API_URL = 'https://task-dashboard-pending-production-c2d8.up.railway.app'
+
 export default function App() {
   const [tasks, setTasks] = useState([])
   const [newTask, setNewTask] = useState('')
@@ -12,7 +14,7 @@ export default function App() {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/tasks')
+      const res = await axios.get(`${API_URL}/api/tasks`)
       setTasks(res.data)
     } catch (error) {
       console.error('Error fetching tasks:', error)
@@ -22,7 +24,7 @@ export default function App() {
   const addTask = async () => {
     if (!newTask.trim()) return
     try {
-      const res = await axios.post('http://localhost:5000/api/tasks', {
+      const res = await axios.post(`${API_URL}/api/tasks`, {
         title: newTask,
         dueDate,
         status: 'new'
@@ -37,7 +39,7 @@ export default function App() {
 
   const deleteTask = async (id) => {
     try {
-      await axios.delete(\http://localhost:5000/api/tasks/\\)
+      await axios.delete(`${API_URL}/api/tasks/${id}`)
       setTasks(tasks.filter(t => t.id !== id))
     } catch (error) {
       console.error('Error deleting task:', error)
@@ -46,7 +48,7 @@ export default function App() {
 
   const updateTaskStatus = async (id, status) => {
     try {
-      const res = await axios.put(\http://localhost:5000/api/tasks/\\, { status })
+      const res = await axios.put(`${API_URL}/api/tasks/${id}`, { status })
       setTasks(tasks.map(t => t.id === id ? res.data : t))
     } catch (error) {
       console.error('Error updating task:', error)
@@ -94,7 +96,9 @@ export default function App() {
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-gray-800">{task.title}</h3>
                   <p className="text-sm text-gray-500">Due: {task.dueDate || 'No date'}</p>
-                  <span className={\inline-block mt-2 px-3 py-1 rounded text-sm font-bold \\}>
+                  <span className={`inline-block mt-2 px-3 py-1 rounded text-sm font-bold ${
+                    task.status === 'completed' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'
+                  }`}>
                     {task.status}
                   </span>
                 </div>
